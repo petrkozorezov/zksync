@@ -20,8 +20,12 @@ if [ "$CI" == "1" ]; then
 fi
 
 # convert the bundler build into JS in case the environment doesn't support WebAssembly
-../build_binaryen.sh
-../binaryen/bin/wasm2js ./dist/zksync-crypto-bundler_bg.wasm -o $ASM
+if command -v wasm2js &> /dev/null; then
+  wasm2js ./dist/zksync-crypto-bundler_bg.wasm -o $ASM
+else
+  ../build_binaryen.sh
+  ../binaryen/bin/wasm2js ./dist/zksync-crypto-bundler_bg.wasm -o $ASM
+fi
 
 # save another copy for bg_asm import
 cp ./dist/zksync-crypto-bundler.js ./dist/zksync-crypto-bundler_asm.js
